@@ -40,9 +40,14 @@ export const generatePromptSeller = (history: string, database:string) => {
 };
 
 const flowSeller = addKeyword(EVENTS.ACTION)
-    .addAnswer(`⏱️`)
+    //.addAnswer(`⏱️`)
     .addAction(async (ctx, { state, flowDynamic, extensions }) => {
         try {
+
+            //si ctx.body tiene una sola letra no respondas nada
+            if (ctx.body.length < 2) return
+            //si ctx.body es igual al ultimo valor del historial en usar no respondas nada
+            if (ctx.body === state.get('lastValue')) return
 
             const ai = extensions.ai as AIClass
             const history = getHistoryParse(state)

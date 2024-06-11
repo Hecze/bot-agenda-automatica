@@ -63,7 +63,7 @@ const flowSchedule = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extension
 
     const formattedDateFrom = format(desiredDate, 'hh:mm a');
     const formattedDateTo = format(addMinutes(desiredDate, +DURATION_MEET), 'hh:mm a');
-    const message = `¡Perfecto! Tenemos disponibilidad de ${formattedDateFrom} a ${formattedDateTo} el día ${format(desiredDate, 'dd/MM/yyyy')}. ¿Confirmo tu reserva? *si*`;
+    const message = `¡Perfecto! Tenemos disponibilidad a las ${formattedDateFrom} el día ${format(desiredDate, 'dd/MM/yyyy')}. ¿Confirmo tu reserva? dime: *si*, *no* `;
     await handleHistory({ content: message, role: 'assistant' }, state);
     await state.update({ desiredDate })
 
@@ -75,7 +75,7 @@ const flowSchedule = addKeyword(EVENTS.ACTION).addAction(async (ctx, { extension
 
     if(body.toLowerCase().includes('si')) return gotoFlow(flowConfirm)
     
-    await flowDynamic('¿Alguna otra fecha y hora?')
+    await flowDynamic('¿Qué fecha y hora sería de tu agrado?')
     await state.update({desiredDate:null})
 })
 
