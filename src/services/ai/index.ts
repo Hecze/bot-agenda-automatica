@@ -25,13 +25,13 @@ class AIClass {
         if (!fs.existsSync(path)) {
             throw new Error("No se encuentra el archivo");
         }
-    
+
         try {
             const transcription = await this.openai.audio.transcriptions.create({
                 file: fs.createReadStream(path),
                 model: "whisper-1"
             })
-    
+
             return transcription.text;
         } catch (err) {
             console.log(err.response.data)
@@ -77,55 +77,7 @@ class AIClass {
      * @param temperature 
      * @returns 
      */
-    determineChatFn = async (
-        messages: ChatCompletionMessageParam[],
-        model?: string,
-        temperature = 0
-    ): Promise<{ prediction: string }> => {
-        try {
-            const completion = await this.openai.chat.completions.create({
-                model,
-                temperature: temperature,
-                messages,
-                functions: [
-                    {
-                        name: "fn_get_prediction_intent",
-                        description: "Predict the user intention for a given conversation",
-                        parameters: {
-                            type: "object",
-                            properties: {
-                                prediction: {
-                                    type: "string",
-                                    description: "The predicted user intention.",
-                                    items: {
-                                        type: "string",
-                                        enum: [
-                                            "PROGRAMAR",
-                                            "HABLAR",
-                                        ]
-                                    },
-                                },
 
-                            },
-                            required: ["prediction"]
-                        }
-                    }
-                ],
-                function_call: {
-                    name: "fn_get_prediction_intent",
-                }
-            });
-            // Convert json to object
-            const response = JSON.parse(completion.choices[0].message.function_call.arguments);
-
-            return response;
-        } catch (err) {
-            console.error(err);
-            return {
-                prediction: '',
-            }
-        }
-    };
 
     /**
      * experimental 🟠
@@ -280,6 +232,8 @@ class AIClass {
             });
             // Convert json to object
             const response = JSON.parse(completion.choices[0].message.function_call.arguments);
+            console.log("messages", messages)
+            console.log("response ia: ", response)
 
             return response;
         } catch (err) {

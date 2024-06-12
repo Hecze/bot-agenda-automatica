@@ -22,7 +22,7 @@ const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDynamic 
 })
     .addAction({ capture: true }, async (ctx, { state, flowDynamic, fallBack }) => {
 
-        if (!ctx.body.includes('->')) {
+        if (!ctx.body.includes('>')) {
             return fallBack(`Porfavor usa este formato, con flechita incluida: Comas -> Megaplaza`)
         }
 
