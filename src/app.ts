@@ -12,9 +12,6 @@ const ai = new AIClass(process.env.OPEN_API_KEY, 'gpt-3.5-turbo');
 const app = express();
 app.use(bodyParser.json());
 
-
-
-
 const main = async () => {
 
 
@@ -31,6 +28,7 @@ app.post("/blacklist/add", async (req, res) => {
     try {
       const { number } = req.body;
       const result = await bot.dynamicBlacklist.add(number);
+      console.log("Added number to blacklist:", number);
       res.json({ number, added: true, result });
     } catch (error) {
       res.status(500).send(error.message);
@@ -42,6 +40,7 @@ app.post("/blacklist/add", async (req, res) => {
     try {
       const { number } = req.body;
       const result = await bot.dynamicBlacklist.remove(number);
+      console.log("Removed number from blacklist:", number);
       res.json({ number, removed: true, result });
     } catch (error) {
       res.status(500).send(error.message);

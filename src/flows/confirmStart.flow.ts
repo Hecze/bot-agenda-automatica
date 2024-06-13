@@ -32,21 +32,8 @@ const flowConfirmStart = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowD
                 await clearHistory(state)
                 return endFlow(`Vale, te escribiré a la brevedad`);
             }
-            /*
-            async function temporizador() {
-                await ejecutarEndFlow();
-
-                console.log(
-                    "El bot se encenderá en 30 segundos para el número: " + number
-                );
-                setTimeout(async () => {
-                    const remove = await Zzz(number, "POST", "remove");
-                    return console.log(remove);
-                }, 30000);
-            }
-            await temporizador();
-            */
-
+             
+            await ejecutarEndFlow();
         }
     }
 
