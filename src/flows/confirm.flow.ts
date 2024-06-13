@@ -32,7 +32,7 @@ const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDynamic 
             place: ctx.body,
             startDate: format(state.get('desiredDate'), 'yyyy/MM/dd HH:mm:ss'),
             duration: DURATION_MEET as string,
-            number: ctx.from.slice(2, 0)
+            number: ctx.from
         }
 
         await appToCalendar(dateObject)
