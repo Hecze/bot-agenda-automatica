@@ -1,45 +1,32 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { clearHistory } from "../utils/handleHistory";
-import { format } from "date-fns";
-import { appToCalendar } from "src/services/calendar";
-import { flowSchedule } from "./schedule.flow";
 import { flowFirstStep } from "./firstStep.flow";
-import { Zzz } from "../utils/Zzz";
+import { flowJustRead } from "./justRead.flow";
 
-const DURATION_MEET = process.env.DURATION_MEET ?? 45
 /**
  * Encargado de pedir los datos necesarios para registrar el evento en el calendario
  */
-const flowConfirmStart = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
-    const number = ctx.from;
-    const Veryfied = await Zzz(number, "POST", "check");
-    if (Veryfied.isBlacklisted) return
-    await flowDynamic('Hola, ahora mismo estoy manejando pero puedo agendar tu viaje automaticamente');
-    await flowDynamic('*Agendar* o *Esperar al humano*');
-}).addAction({ capture: true }, async (ctx, { state, flowDynamic, endFlow, gotoFlow }) => {
-    const number = ctx.from;
-
+const flowConfirmStart = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic }) => {
+    await flowDynamic('¡Hola! Somos una familia cristiana que brindamos servicios de movilidad a todo Lima. Nos caracterizamos por ser puntuales y la seguridad al 100%.');
+    await flowDynamic('*Agendar* o *Esperar* al humano');
+}).addAction({ capture: true }, async (ctx, { state, flowDynamic, gotoFlow }) => {
     if (ctx.body.toLocaleLowerCase().includes('agendar')) {
-        const remove = await Zzz(number, "POST", "remove");
         return gotoFlow(flowFirstStep)
     }
 
-    if (ctx.body.toLocaleLowerCase().includes('esperar')) {
-        const Blocked = await Zzz(number, "POST", "add");
-
-        if (Blocked.added) {
-            async function ejecutarEndFlow() {
-                await clearHistory(state)
-                return endFlow(`Vale, te escribiré a la brevedad`);
-            }
-             
-            await ejecutarEndFlow();
+    if (ctx.body.toLocaleLowerCase().includes('esperar') || ctx.body.toLocaleLowerCase().includes('apagar')) {
+        async function ejecutarEndFlow() {
+            await clearHistory(state)
+            return gotoFlow(flowJustRead);
         }
+        await flowDynamic("Chatbot apagado. puedes volver a encenderlo escribiendo *Encender*");
+        await ejecutarEndFlow();
     }
 
-
-
-
+    else{
+        await flowDynamic('🤔');
+        return gotoFlow(flowConfirmStart)
+    }
 })
 
 

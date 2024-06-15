@@ -2,7 +2,7 @@ import { addKeyword, EVENTS } from "@builderbot/bot";
 import { clearHistory } from "../utils/handleHistory";
 import { format } from "date-fns";
 import { appToCalendar } from "src/services/calendar";
-import { Zzz } from "src/utils/Zzz";
+import { flowJustRead } from "./justRead.flow";
 
 const DURATION_MEET = process.env.DURATION_MEET ?? 45
 /**
@@ -21,8 +21,7 @@ const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDynamic 
     await state.update({ name: ctx.body })
     await flowDynamic(`Anotado! Ahora porfavor aclarame el lugar de salida y llegada usando este formato: Comas -> Megaplaza`)
 })
-    .addAction({ capture: true }, async (ctx, { state, flowDynamic, fallBack }) => {
-        const number = ctx.from;
+    .addAction({ capture: true }, async (ctx, { state, flowDynamic, fallBack, endFlow }) => {
         if (!ctx.body.includes('>')) {
             return fallBack(`Porfavor usa este formato, con flechita incluida: Comas -> Megaplaza`)
         }
@@ -37,8 +36,7 @@ const flowConfirm = addKeyword(EVENTS.ACTION).addAction(async (_, { flowDynamic 
 
         await appToCalendar(dateObject)
         clearHistory(state)
-        const Blocked = await Zzz(number, "POST", "add");
-        await flowDynamic('Listo! agendado Buen dia')
+        return endFlow('Listo! agendado Buen dia')
     })
 
 export { flowConfirm }

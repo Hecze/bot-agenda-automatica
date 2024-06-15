@@ -1,23 +1,24 @@
 import { addKeyword, EVENTS } from "@builderbot/bot";
 import { clearHistory, handleHistory } from "../utils/handleHistory";
-import { format } from "date-fns";
-import { appToCalendar } from "src/services/calendar";
 import { flowSchedule } from "./schedule.flow";
 
-const DURATION_MEET = process.env.DURATION_MEET ?? 45
 /**
  * Encargado de pedir los datos necesarios para registrar el evento en el calendario
  */
-const flowFirstStep = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic, gotoFlow, endFlow, state }) => {
+const flowFirstStep = addKeyword(EVENTS.ACTION).addAction(async (ctx, { flowDynamic, state }) => {
     await clearHistory(state)
-    const m = '¿Qué fecha y hora sería de tu agrado?'
+    const m = '¿Qué fecha y hora sería de tu agrado? en formato: dia/mes - hora'
     await flowDynamic(m)
     handleHistory({ content: m, role: "assistant" }, state);
-}).addAction({ capture: true }, async (ctx, { state, flowDynamic, endFlow, gotoFlow }) => {
+}).addAction({ capture: true }, async (ctx, { state,endFlow, gotoFlow }) => {
 
-    if (ctx.body.toLocaleLowerCase().includes('cancelar') || ctx.body.toLocaleLowerCase().includes('esperar') || ctx.body.toLocaleLowerCase().includes('salir') ) {
-        await clearHistory(state)
-        return endFlow(`cita cancelada`)
+    if (ctx.body.toLocaleLowerCase().includes('esperar') || ctx.body.toLocaleLowerCase().includes('apagar') || ctx.body.toLocaleLowerCase().includes('cancelar') || ctx.body.toLocaleLowerCase().includes('ninguna')) { 
+        async function ejecutarEndFlow() {
+            await clearHistory(state)
+            return endFlow(`cita cancelada.`);
+            
+        }
+        await ejecutarEndFlow();
     }
 
     handleHistory({ content: ctx.body, role: 'user' }, state);
