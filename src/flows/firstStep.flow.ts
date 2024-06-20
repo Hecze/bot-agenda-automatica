@@ -10,7 +10,10 @@ const flowFirstStep = addKeyword(EVENTS.ACTION)
     .addAction(async (ctx, { flowDynamic, state }) => {
         await clearHistory(state)
         const m = '¿Qué fecha y hora sería de tu agrado?'
-        await flowDynamic(m)
+        await flowDynamic([{ 
+            body: m,
+            delay: 1000 
+           }])
         handleHistory({ content: m, role: "assistant" }, state);
     })
 

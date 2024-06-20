@@ -11,7 +11,10 @@ const DURATION_MEET = process.env.DURATION_MEET ?? 45
 const flowConfirm = addKeyword(EVENTS.ACTION)
 
     .addAction(async (_, { flowDynamic }) => {
-        await flowDynamic('Ok, voy a pedirte unos datos para agendar')
+        await flowDynamic([{ 
+            body: 'Ok, voy a pedirte unos datos para agendar',
+            delay: 1000 
+           }])
         await flowDynamic('¿Cual es tu nombre?')
     })
 
@@ -26,7 +29,10 @@ const flowConfirm = addKeyword(EVENTS.ACTION)
             return fallBack('Por favor, ingresa un nombre válido.');
         }
         await state.update({ name: ctx.body })
-        await flowDynamic(`Anotado! Ahora porfavor aclarame el lugar de salida y llegada usando este formato: Comas -> Megaplaza`)
+        await flowDynamic([{ 
+            body: `Anotado! Ahora porfavor aclarame el lugar de salida y llegada usando este formato: Comas -> Megaplaza`,
+            delay: 1000 
+           }])
     })
 
     .addAction({ capture: true }, async (ctx, { state, flowDynamic, fallBack, endFlow }) => {
@@ -35,6 +41,7 @@ const flowConfirm = addKeyword(EVENTS.ACTION)
             if (ctx.body.toLocaleLowerCase() == "cancelar") return endFlow(`cita cancelada.`)
 
             return fallBack(`Porfavor usa este formato, con flechita incluida: Comas -> Megaplaza`)
+            
         }
 
         const dateObject = {
@@ -47,10 +54,13 @@ const flowConfirm = addKeyword(EVENTS.ACTION)
 
         await appToCalendar(dateObject)
         clearHistory(state)
-        await flowDynamic('Listo! agendado, Buen dia')
+        await flowDynamic([{ 
+            body: `Listo! agendado, Buen dia`,
+            delay: 1000 
+           }])
     })
 
-    .addAction({ capture: true }, async (ctx, { state, flowDynamic, endFlow, gotoFlow }) => {
+    .addAction({ capture: true }, async (ctx, { endFlow, gotoFlow }) => {
         if (ctx.body.toLocaleLowerCase().includes('gracias')) {
             return endFlow(`Un placer! Recuerda que puedes volver a agendar una cita escribiendo *Agendar*`);
         }

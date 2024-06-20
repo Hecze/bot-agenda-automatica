@@ -11,7 +11,10 @@ import { flowJustRead } from "./justRead.flow";
 const flowConfirmStart = addKeyword(EVENTS.ACTION)
 
     .addAction(async (ctx, { flowDynamic }) => {
-        await flowDynamic('¡Hola! Somos una familia cristiana que brindamos servicios de movilidad a todo Lima. Nos caracterizamos por ser puntuales y la seguridad al 100%.');
+        await flowDynamic([{ 
+            body: `¡Hola! Somos una familia cristiana que brindamos servicios de movilidad a todo Lima. Nos caracterizamos por ser puntuales y la seguridad al 100%.`,
+            delay: 1000 
+           }])
         await flowDynamic('*Agendar* o *Esperar* al humano');
 
     })
@@ -26,7 +29,10 @@ const flowConfirmStart = addKeyword(EVENTS.ACTION)
                 await clearHistory(state)
                 return gotoFlow(flowJustRead);
             }
-            await flowDynamic("Chatbot apagado. puedes volver a encenderlo escribiendo *Encender*");
+            await flowDynamic([{ 
+                body: `Chatbot apagado. puedes volver a encenderlo escribiendo *Encender*`,
+                delay: 1000 
+               }])
             await ejecutarEndFlow();
         }
 
